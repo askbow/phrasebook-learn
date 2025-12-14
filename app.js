@@ -137,10 +137,12 @@ function initializeProgress(){
     if(!progress[lang.code]){
       progress[lang.code] = {}
     }
-    // each phrase is represented by its token index (0..n-1)
-    lang.full_tokens.forEach((tok, idx)=>{
-      if(!progress[lang.code][idx]){
-        progress[lang.code][idx] = null // not seen yet
+    // each phrase is represented by its token string (e.g. "hi", "please")
+    // we expect a `translations` mapping on each language object.
+    const tokens = Object.keys(lang.translations || {})
+    tokens.forEach((tok)=>{
+      if(!(tok in progress[lang.code])){
+        progress[lang.code][tok] = null // not seen yet
       }
     })
   })
@@ -176,15 +178,21 @@ async function runSession(profile){
   const lang = chooseLanguageForSession(profile)
 
   // step 1: show full phrase and translation
-  const idxs = lang.full_tokens.map((t,i)=>i)
-  const full = lang.translations_en.join(' \u00A0•\u00A0 ')
-  qs('#full-phrase').textContent = lang.translations_en.join('   ')
-  // We show the English translations as the 'native' translation for demo purposes.
-  qs('#full-translation').textContent = `(${profile.native}) — English shown here for demo: ${full}`
+  // Build the canonical token order from the translations mapping keys. Using
+  // Object.keys preserves insertion order from the JSON file.
+  const tokens = Object.keys(lang.translations || {})
+  const fullTarget = tokens.map(t=>lang.translations[t]).join('   ')
+  qs('#full-phrase').textContent = fullTarget
+
+  // find the user's native language translations if provided in the dataset;
+  // fall back to English (`en`) if not present.
+  const nativeLang = LANGS.find(l=>l.code === profile.native) || LANGS.find(l=>l.code==='en')
+  const fullNative = tokens.map(t=> (nativeLang && nativeLang.translations && nativeLang.translations[t]) || t).join('   ')
+  qs('#full-translation').textContent = `(${profile.native}) — ${fullNative}`
 
   // audio button: speak the phrase in the target language using SpeechSynthesis
   qs('#btn-play-tts').onclick = ()=>{
-    speakText(lang.translations_en.join(', '), lang.code)
+    speakText(tokens.map(t=>lang.translations[t]).join(', '), lang.code)
   }
 
   // generate exercises — at least 10
@@ -206,16 +214,16 @@ function speakText(text, langCode){
 }
 
 // --- Exercise generation -----------------------------------------------
-// Each exercise object will be: {id, prompt, answer, direction, tokenIndex}
+// Each exercise object will be: {id, prompt, answer, direction, tokenKey, promptSpeak}
 // direction: 'to_native' (target -> native) or 'from_native' (native -> target)
 function generateExercises(lang, profile, progress, minCount){
   const exs = []
-  const tokens = lang.full_tokens
+  const tokens = Object.keys(lang.translations || {})
   // We'll create exercises that ask for a translation of one token (or short phrase)
   // in either direction. We prefer tokens that are due (isDue) but ensure variety.
 
-  // prepare candidate indices
-  const candidates = tokens.map((t,i)=>i)
+  // prepare candidate token keys
+  const candidates = tokens.slice()
   // sort candidates by due-ness: due items first
   candidates.sort((a,b)=>{
     const sa = progress[lang.code] && progress[lang.code][a]
@@ -225,20 +233,27 @@ function generateExercises(lang, profile, progress, minCount){
     return da - db
   })
 
+  // helper: find native language block
+  const nativeLang = LANGS.find(l=>l.code === profile.native) || LANGS.find(l=>l.code==='en')
+
   // fill exercises preferring due tokens
   while(exs.length < minCount && candidates.length){
-    const idx = candidates.shift()
+    const token = candidates.shift()
+    const targetText = lang.translations[token]
+    const nativeText = (nativeLang && nativeLang.translations && nativeLang.translations[token]) || token
     // add two variants for each token (target->native and native->target) if possible
-    exs.push({id: `${lang.code}-${idx}-t2n`, tokenIndex: idx, prompt: lang.translations_en[idx], answer: lang.full_tokens[idx], direction:'to_native'})
-    if(exs.length < minCount) exs.push({id: `${lang.code}-${idx}-n2t`, tokenIndex: idx, prompt: lang.full_tokens[idx], answer: lang.translations_en[idx], direction:'from_native'})
+    exs.push({id: `${lang.code}-${encodeURIComponent(token)}-t2n`, tokenKey: token, prompt: targetText, answer: nativeText, direction:'to_native', promptSpeak: lang.code})
+    if(exs.length < minCount) exs.push({id: `${lang.code}-${encodeURIComponent(token)}-n2t`, tokenKey: token, prompt: nativeText, answer: targetText, direction:'from_native', promptSpeak: nativeLang.code || 'en'})
   }
 
   // if still short, repeat random tokens until minCount
   while(exs.length < minCount){
-    const idx = Math.floor(Math.random()*tokens.length)
+    const token = tokens[Math.floor(Math.random()*tokens.length)]
     const dir = Math.random() < 0.5 ? 'to_native' : 'from_native'
-    if(dir==='to_native') exs.push({id:`${lang.code}-${idx}-t2n`,tokenIndex:idx,prompt:lang.translations_en[idx],answer:lang.full_tokens[idx],direction:dir})
-    else exs.push({id:`${lang.code}-${idx}-n2t`,tokenIndex:idx,prompt:lang.full_tokens[idx],answer:lang.translations_en[idx],direction:dir})
+    const targetText = lang.translations[token]
+    const nativeText = (nativeLang && nativeLang.translations && nativeLang.translations[token]) || token
+    if(dir==='to_native') exs.push({id:`${lang.code}-${encodeURIComponent(token)}-t2n`,tokenKey:token,prompt:targetText,answer:nativeText,direction:dir,promptSpeak:lang.code})
+    else exs.push({id:`${lang.code}-${encodeURIComponent(token)}-n2t`,tokenKey:token,prompt:nativeText,answer:targetText,direction:dir,promptSpeak:nativeLang.code || 'en'})
   }
 
   // shuffle to avoid predictable pairs
@@ -275,9 +290,8 @@ function renderExercises(exs, langCode, progress){
     const play = document.createElement('button')
     play.textContent = 'Play prompt'
     play.onclick = ()=>{
-      // if direction is to_native (target->native) we speak the target; otherwise speak native prompt
-      const speakLang = e.direction==='to_native' ? langCode : 'en'
-      speakText(e.prompt, speakLang)
+      // speak the prompt in whichever language was chosen when the exercise was created
+      speakText(e.prompt, e.promptSpeak || langCode)
     }
 
     div.appendChild(prompt)
@@ -302,10 +316,10 @@ function handleAnswer(ex, userText, containerEl, langCode, progress){
   res.textContent = correct ? 'Correct' : `Expected: ${ex.answer}`
   containerEl.appendChild(res)
 
-  // update progress state for this token
+  // update progress state for this token (tokenKey is the canonical token string)
   if(!progress[langCode]) progress[langCode] = {}
-  const state = progress[langCode][ex.tokenIndex]
-  progress[langCode][ex.tokenIndex] = updateLearningState(state, correct)
+  const state = progress[langCode][ex.tokenKey]
+  progress[langCode][ex.tokenKey] = updateLearningState(state, correct)
   saveProgress(progress)
 }
 
