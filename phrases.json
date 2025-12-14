@@ -1,0 +1,48 @@
+{
+  "meta":{
+    "source":"seed (based on Hilton phrasebook 'Most important phrases')",
+    "notes":"This is a small seed. Add more languages/phrases to expand. The app expects an array named 'languages'."
+  },
+  "languages":[
+    {
+      "code":"es",
+      "name":"Spanish",
+      "full_tokens":["hi","a beer","please","thank you","you're welcome","cheers!"],
+      "translations_en":["hola","una cerveza","por favor","gracias","de nada","¡salud!"],
+      "country_phrases":["¿Dónde está el baño?","Una mesa para dos, por favor"],
+      "peculiarities":"Use 'por favor' for please; 'gracias' is standard. In many Spanish-speaking countries 'cheers' is '¡salud!'."
+    },
+    {
+      "code":"fr",
+      "name":"French",
+      "full_tokens":["hi","a beer","please","thank you","you're welcome","cheers!"],
+      "translations_en":["salut","une bière","s'il vous plaît","merci","de rien","santé!"],
+      "country_phrases":["Où sont les toilettes?","Une table pour deux, s'il vous plaît"],
+      "peculiarities":"Formal and informal pronouns matter (tu/vous). 'santé' for cheers; some use 'à la vôtre'."
+    },
+    {
+      "code":"de",
+      "name":"German",
+      "full_tokens":["hi","a beer","please","thank you","you're welcome","cheers!"],
+      "translations_en":["hallo","ein Bier","bitte","danke","gern geschehen","prost!"],
+      "country_phrases":["Wo ist die Toilette?","Ein Tisch für zwei, bitte"],
+      "peculiarities":"'Bitte' can be please or you're welcome depending on context. 'Prost' is common for cheers."
+    },
+    {
+      "code":"it",
+      "name":"Italian",
+      "full_tokens":["hi","a beer","please","thank you","you're welcome","cheers!"],
+      "translations_en":["ciao","una birra","per favore","grazie","prego","salute!"],
+      "country_phrases":["Dov'è il bagno?","Un tavolo per due, per favore"],
+      "peculiarities":"'Prego' is used for you're welcome; 'salute' or 'cin cin' for cheers."
+    },
+    {
+      "code":"pt",
+      "name":"Portuguese",
+      "full_tokens":["hi","a beer","please","thank you","you're welcome","cheers!"],
+      "translations_en":["olá","uma cerveja","por favor","obrigado","de nada","saúde!"],
+      "country_phrases":["Onde é a casa de banho?","Uma mesa para dois, por favor"],
+      "peculiarities":"In Portuguese 'obrigado' if male speaker, 'obrigada' if female; 'saúde' for cheers."
+    }
+  ]
+}

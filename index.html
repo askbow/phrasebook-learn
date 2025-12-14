@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phrasebook Learn — Deferred Repetition Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!--
+      This is the single-page front-end for the local-only phrasebook app.
+      Everything runs in the browser and uses localStorage; no user data is
+      sent to any server. The server can be just a static file host.
+    -->
+  </head>
+  <body>
+    <main id="app">
+      <header>
+        <h1>Phrasebook Learn</h1>
+        <p class="tagline">A tiny local web app for learning essential phrases with deferred repetition.</p>
+      </header>
+
+      <!-- Onboarding: ask name / native language / priorities -->
+      <section id="onboarding" class="card">
+        <h2>Welcome — let's set up your profile</h2>
+        <label>
+          What should we call you?
+          <input id="input-name" type="text" placeholder="Your name" />
+        </label>
+
+        <label>
+          Your native language (used for translations shown as the 'native'):
+          <select id="select-native"></select>
+        </label>
+
+        <label>
+          Choose 3–5 priority target languages (we'll focus on them):
+          <div id="priority-list" class="checkbox-grid"></div>
+        </label>
+
+        <div class="actions">
+          <button id="btn-start">Save & Start session</button>
+        </div>
+      </section>
+
+      <!-- Session view: shown after onboarding -->
+      <section id="session" class="hidden">
+        <div class="session-header">
+          <h2 id="session-title">Today's session</h2>
+          <div class="session-meta">
+            <span id="user-greeting"></span>
+            <button id="btn-reset" class="link">Reset profile</button>
+          </div>
+        </div>
+
+        <!-- Step 1: full dialogue + translation -->
+        <div id="dialogue" class="card">
+          <h3>Full dialogue</h3>
+          <p id="full-phrase" class="big"></p>
+          <p id="full-translation" class="muted"></p>
+          <div class="audio-controls">
+            <button id="btn-play-tts">Play synthesized audio</button>
+          </div>
+        </div>
+
+        <!-- Step 2: exercises -->
+        <div id="exercises" class="card">
+          <h3>Challenge</h3>
+          <p class="muted">Translate the highlighted piece. There will be at least 10 exercises per session.</p>
+          <div id="exercise-list"></div>
+          <div class="actions">
+            <button id="btn-finish" class="hidden">Finish session</button>
+          </div>
+        </div>
+
+        <!-- Session summary -->
+        <div id="summary" class="card hidden">
+          <h3>Session complete</h3>
+          <div id="summary-stats"></div>
+          <div class="actions">
+            <button id="btn-next-day">Next day (simulate)</button>
+            <button id="btn-back-home">Back</button>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <small>All data is stored in your browser only (localStorage). Static files only.</small>
+      </footer>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

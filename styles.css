@@ -1,0 +1,37 @@
+/* Basic styles and responsive layout. The CSS is intentionally simple so you can
+   read and modify it while you learn front-end development. */
+:root{
+  --bg:#f7f7fb;
+  --card:#ffffff;
+  --muted:#666;
+  --accent:#2b6cb0;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#111}
+main{max-width:900px;margin:24px auto;padding:16px}
+header{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.tagline{color:var(--muted);margin-top:0}
+.card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
+.hidden{display:none}
+label{display:block;margin:8px 0}
+input[type=text],select{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+button.link{background:none;color:var(--accent);padding:4px}
+.checkbox-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.checkbox-grid label{display:flex;align-items:center;gap:6px;background:#f2f8ff;border-radius:6px;padding:6px 8px}
+.big{font-size:1.25rem;margin:8px 0}
+.muted{color:var(--muted)}
+.exercise{display:flex;flex-direction:column;gap:6px;margin:12px 0;padding:8px;border-radius:8px;border:1px solid #eee}
+.exercise .prompt{font-weight:600}
+.exercise input[type=text]{padding:6px;border:1px solid #ddd;border-radius:6px}
+.result-correct{color:green}
+.result-wrong{color:crimson}
+
+/* Responsive */
+@media (max-width:600px){
+  main{margin:12px;padding:8px}
+  .actions{justify-content:stretch}
+}
+
+footer{margin-top:24px;text-align:center;color:var(--muted)}
