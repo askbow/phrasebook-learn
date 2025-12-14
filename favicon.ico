@@ -1,0 +1,5 @@
+This is a placeholder favicon file. Replace with a proper .ico binary if you want an image.
+
+You can generate a proper favicon using an image editor or an online converter and
+place the binary ICO file here. For now this placeholder prevents 404 requests
+from the browser when it tries to fetch /favicon.ico.
