@@ -196,7 +196,7 @@ async function runSession(profile){
   }
 
   // generate exercises — at least 10
-  const exercises = generateExercises(lang, profile, progress, 10)
+  const exercises = generateExercises(lang, profile, progress, 3)
   renderExercises(exercises, lang.code, progress)
 }
 
