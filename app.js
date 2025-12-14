@@ -203,18 +203,36 @@ async function runSession(profile){
   // Build the canonical token order from the translations mapping keys. Using
   // Object.keys preserves insertion order from the JSON file.
   const tokens = Object.keys(lang.translations || {})
-  const fullTarget = tokens.map(t=>lang.translations[t]).join('   ')
-  qs('#full-phrase').textContent = fullTarget
+  // Render the full dialogue as separate lines for readability. We render
+  // the target language lines in `#full-phrase` and the native-language
+  // translations in `#full-translation` (muted). Use innerHTML because we
+  // include <div> line wrappers for better mobile legibility.
+  const targetLines = tokens.map(t => lang.translations[t] || '')
 
   // find the user's native language translations if provided in the dataset;
   // fall back to English (`en`) if not present.
   const nativeLang = LANGS.find(l=>l.code === profile.native) || LANGS.find(l=>l.code==='en')
-  const fullNative = tokens.map(t=> (nativeLang && nativeLang.translations && nativeLang.translations[t]) || t).join('   ')
-  qs('#full-translation').textContent = `(${profile.native}) — ${fullNative}`
+  const nativeLines = tokens.map(t => (nativeLang && nativeLang.translations && nativeLang.translations[t]) || '')
+
+  // Build paired rows so each target line sits side-by-side with its native
+  // translation. We render a small header row showing the language names and
+  // then a sequence of .dialog-row elements containing two .dialog-col cells.
+  const headerHtml = `<div class="dialog-row header"><div class="dialog-col target header">${escapeHtml(lang.name)}</div><div class="dialog-col native header muted">${escapeHtml(nativeLang.name || profile.native)}</div></div>`
+  const rowsHtml = tokens.map((t,i) => `
+    <div class="dialog-row">
+      <div class="dialog-col target">${escapeHtml(targetLines[i])}</div>
+      <div class="dialog-col native muted">${escapeHtml(nativeLines[i])}</div>
+    </div>
+  `).join('')
+
+  // Put the paired rows into the primary container. Clear the old secondary
+  // container (if present) to avoid duplicate content.
+  qs('#full-phrase').innerHTML = headerHtml + rowsHtml
+  if(qs('#full-translation')) qs('#full-translation').innerHTML = ''
 
   // audio button: speak the phrase in the target language using SpeechSynthesis
   qs('#btn-play-tts').onclick = ()=>{
-    speakText(tokens.map(t=>lang.translations[t]).join(', '), lang.code)
+    speakText(tokens.map(t=>lang.translations[t]).join(' '), lang.code)
   }
 
   // generate exercises — at least 10

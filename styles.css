@@ -28,6 +28,36 @@ button.link{background:none;color:var(--accent);padding:4px}
 .result-correct{color:green}
 .result-wrong{color:crimson}
 
+/* Dialogue rendering: one token per line for better legibility */
+.dialog-line{padding:6px 0;border-bottom:1px dashed #eee}
+.dialog-line:last-child{border-bottom:0}
+.dialog-line.muted{color:var(--muted);font-size:0.95rem}
+
+/* Paired row layout for the full dialogue: left = target, right = native */
+.dialog-row{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:6px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.dialog-row.header{ border-bottom: 2px solid rgba(0,0,0,0.08); margin-bottom:6px; }
+.dialog-col{ flex:1; min-width:0; }
+.dialog-col.target{ text-align:left; }
+.dialog-col.native{ text-align:left; opacity:0.85; }
+.dialog-row .header.dialog-col{ font-weight:600; padding-bottom:4px; }
+
+/* Responsive: stack columns on narrow screens */
+@media (max-width:640px){
+  .dialog-row{ flex-direction:column; }
+  .dialog-row.header{ margin-bottom:8px; }
+}
+
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.choice{background:#f1f5f9;border:1px solid #e2e8f0;padding:8px 10px;border-radius:8px;cursor:pointer;color:#000}
+.choice.selected{outline:2px solid #2b6cb0}
+.choice:disabled{opacity:0.6;cursor:default}
+
 /* Responsive */
 @media (max-width:600px){
   main{margin:12px;padding:8px}
