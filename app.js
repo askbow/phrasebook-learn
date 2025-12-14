@@ -202,14 +202,73 @@ async function runSession(profile){
 
 // Use Web Speech Synthesis to speak target text. We attempt to pick a voice
 // that roughly matches the language code. This is browser-dependent.
-function speakText(text, langCode){
+// Robust speech synthesis helper. Many browsers (notably Firefox) populate
+// available voices asynchronously and fire a `voiceschanged` event. We wait a
+// short time for voices to become available and pick the best match, falling
+// back gracefully.
+async function speakText(text, langCode){
   if(!('speechSynthesis' in window)) return alert('Speech synthesis not supported in this browser')
+
+  // Helper: try to get voices immediately, otherwise wait for the voiceschanged
+  // event or until the timeout elapses.
+  function getVoicesWithTimeout(timeout = 1200){
+    return new Promise((resolve)=>{
+      const voices = speechSynthesis.getVoices()
+      if(voices && voices.length) return resolve(voices)
+
+      // Handler for voiceschanged
+      const handler = ()=>{
+        const v = speechSynthesis.getVoices()
+        if(v && v.length){
+          cleanup()
+          resolve(v)
+        }
+      }
+
+      // fallback cleanup/timeout
+      const to = setTimeout(()=>{
+        cleanup()
+        resolve(speechSynthesis.getVoices() || [])
+      }, timeout)
+
+      function cleanup(){
+        clearTimeout(to)
+        try{ speechSynthesis.removeEventListener('voiceschanged', handler) }catch(e){ /* ignore */ }
+        try{ speechSynthesis.onvoiceschanged = null }catch(e){ /* ignore */ }
+      }
+
+      // Some implementations use the onvoiceschanged property instead of
+      // addEventListener; set both to be safe.
+      speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', handler)
+      try{ speechSynthesis.onvoiceschanged = handler }catch(e){ /* ignore */ }
+    })
+  }
+
+  const voices = await getVoicesWithTimeout()
+
+  // choose best voice matching the requested language code.
+  function pickVoice(voices, lang){
+    if(!voices || !voices.length) return null
+    const wanted = (lang||'').toLowerCase()
+    // exact prefix match first (e.g. 'es', 'es-ES')
+    let v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(wanted))
+    if(v) return v
+    // try matching primary subtag (e.g. 'es' matches 'es-ES')
+    const primary = wanted.split('-')[0]
+    if(primary){
+      v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(primary))
+      if(v) return v
+    }
+    // fallback: prefer a non-empty voice that isn't 'default' for clearer speech
+    v = voices.find(x => x.localService) || voices[0]
+    return v
+  }
+
   const utter = new SpeechSynthesisUtterance(text)
-  // choose a voice that matches the lang code if possible
-  const voices = speechSynthesis.getVoices()
-  const match = voices.find(v=>v.lang && v.lang.startsWith(langCode))
+  const match = pickVoice(voices, langCode)
   if(match) utter.voice = match
   utter.rate = 0.95
+  // optional: small volume/rate tweaks could be exposed in UI later
   speechSynthesis.speak(utter)
 }
 
