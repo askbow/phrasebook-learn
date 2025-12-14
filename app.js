@@ -162,14 +162,36 @@ function showSession(profile){
 }
 
 function chooseLanguageForSession(profile){
-  // Weighted choice: priorities get weight 3, others weight 1. But ensure all languages
-  // appear across sessions by using a small chance for others.
+  // Prefer showing user-selected priority languages before exposing any other
+  // languages. If the user has priorities that haven't been seen yet (no
+  // progress recorded for any token in that language), pick uniformly from
+  // those unseen priorities. Otherwise use a weighted random that favors
+  // priorities so they appear more often during repetition.
+
+  const progress = loadProgress()
+
+  // find priorities that are effectively "unseen" (no non-null progress)
+  const unseenPriorities = (profile.priorities || []).filter(code => {
+    const p = progress[code]
+    if(!p) return true
+    // if none of the tokens have a recorded object (all null), treat as unseen
+    return !Object.values(p).some(s => s && s.lastSeen)
+  })
+
+  if(unseenPriorities.length > 0){
+    // pick uniformly among the unseen priority languages
+    const pickCode = unseenPriorities[Math.floor(Math.random()*unseenPriorities.length)]
+    return LANGS.find(l => l.code === pickCode) || LANGS[0]
+  }
+
+  // otherwise fall back to a weighted random choice where priorities have
+  // higher weight (so they show more often). Increase the weight to make
+  // priorities noticeably more frequent.
   const pool = []
   LANGS.forEach(l=>{
-    const weight = profile.priorities.includes(l.code) ? 3 : 1
+    const weight = profile.priorities.includes(l.code) ? 4 : 1
     for(let i=0;i<weight;i++) pool.push(l)
   })
-  // simple random pick
   return pool[Math.floor(Math.random()*pool.length)]
 }
 
@@ -197,7 +219,9 @@ async function runSession(profile){
 
   // generate exercises — at least 10
   const exercises = generateExercises(lang, profile, progress, 3)
-  renderExercises(exercises, lang.code, progress)
+  // pass both the target language code and the user's native language code so
+  // the renderer can show human-friendly names (e.g. "Translate to English").
+  renderExercises(exercises, lang.code, nativeLang.code, progress)
 }
 
 // Use Web Speech Synthesis to speak target text. We attempt to pick a voice
@@ -322,39 +346,104 @@ function generateExercises(lang, profile, progress, minCount){
   return exs
 }
 
-function renderExercises(exs, langCode, progress){
+function renderExercises(exs, langCode, nativeCode, progress){
   const container = qs('#exercise-list')
   container.innerHTML = ''
   const answers = []
+
+  // Resolve display names for the target and native languages. We look them up
+  // in the global LANGS array; fall back to the language code if no match.
+  const targetName = (LANGS.find(l => l.code === langCode) || {}).name || langCode
+  const nativeName = (LANGS.find(l => l.code === nativeCode) || {}).name || nativeCode
 
   exs.forEach((e, idx)=>{
     const div = document.createElement('div')
     div.className = 'exercise'
     const prompt = document.createElement('div')
     prompt.className = 'prompt'
-    // highlight the token to translate
-    prompt.innerHTML = `${idx+1}. <span class="muted">${e.direction==='to_native' ? 'Translate to native' : 'Translate to target'}</span> — <strong>${escapeHtml(e.prompt)}</strong>`
-    const input = document.createElement('input')
-    input.type = 'text'
-    input.placeholder = 'Type your translation and press Enter'
-    input.addEventListener('keydown', (ev)=>{
-      if(ev.key === 'Enter'){
-        const val = input.value.trim()
-        handleAnswer(e, val, div, langCode, progress)
-        input.disabled = true
+  // highlight the token to translate and include the human-friendly language
+  // name (e.g. "Translate to English" or "Translate to Spanish").
+  const instruction = e.direction === 'to_native' ? `Translate to ${escapeHtml(nativeName)}` : `Translate to ${escapeHtml(targetName)}`
+    prompt.innerHTML = `${idx+1}. <span class="muted">${instruction}</span> — <strong>${escapeHtml(e.prompt)}</strong>`
+
+    // Instead of free-text input, present 5 choices (one correct + 4 distractors).
+    const choicesContainer = document.createElement('div')
+    choicesContainer.className = 'choices'
+
+    // Build the pool for distractors: depending on direction, use native or target
+    // language translations values. We prefer same-language distractors.
+    function buildChoices(ex){
+      const choices = []
+      const targetLangObj = LANGS.find(l => l.code === langCode)
+      const nativeLangObj = LANGS.find(l => l.code === nativeCode)
+
+      // correct answer is ex.answer
+      const correct = ex.answer
+
+      // pool: values from the language object appropriate to the answer's language
+      let pool = []
+      if(ex.direction === 'to_native'){
+        // answers should be from the native language translations
+        pool = nativeLangObj ? Object.values(nativeLangObj.translations || {}) : []
+      } else {
+        // answers should be from the target language translations
+        pool = targetLangObj ? Object.values(targetLangObj.translations || {}) : []
       }
+
+      // remove empties and the correct answer
+      pool = pool.filter(x => x && String(x).trim() && sanitize(x) !== sanitize(correct))
+
+      // pick up to 4 random distractors
+      const distractors = []
+      const poolCopy = pool.slice()
+      while(distractors.length < 4 && poolCopy.length){
+        const i = Math.floor(Math.random()*poolCopy.length)
+        distractors.push(poolCopy.splice(i,1)[0])
+      }
+
+      // if not enough distractors (small dataset), use other languages' translations
+      if(distractors.length < 4){
+        const extraPool = []
+        LANGS.forEach(L=>{
+          Object.values(L.translations || {}).forEach(v=>{
+            if(v && sanitize(v) !== sanitize(correct) && !pool.includes(v)) extraPool.push(v)
+          })
+        })
+        while(distractors.length < 4 && extraPool.length){
+          const i = Math.floor(Math.random()*extraPool.length)
+          distractors.push(extraPool.splice(i,1)[0])
+        }
+      }
+
+      // assemble choices and shuffle
+      const all = [correct, ...distractors].slice(0,5)
+      for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}
+      return all
+    }
+
+    const renderedChoices = buildChoices(e)
+    renderedChoices.forEach(choiceText=>{
+      const btn = document.createElement('button')
+      btn.className = 'choice'
+      btn.type = 'button'
+      btn.innerHTML = escapeHtml(choiceText)
+      btn.addEventListener('click', ()=>{
+        // disable all buttons for this exercise after selection
+        Array.from(choicesContainer.querySelectorAll('button')).forEach(b=>b.disabled = true)
+        handleAnswer(e, choiceText, div, langCode, progress)
+        // mark selected button visually
+        btn.classList.add('selected')
+      })
+      choicesContainer.appendChild(btn)
     })
 
     // optional 'play' button for the prompt (speak the prompt in the appropriate language)
     const play = document.createElement('button')
     play.textContent = 'Play prompt'
-    play.onclick = ()=>{
-      // speak the prompt in whichever language was chosen when the exercise was created
-      speakText(e.prompt, e.promptSpeak || langCode)
-    }
+    play.onclick = ()=>{ speakText(e.prompt, e.promptSpeak || langCode) }
 
     div.appendChild(prompt)
-    div.appendChild(input)
+    div.appendChild(choicesContainer)
     div.appendChild(play)
     container.appendChild(div)
   })
