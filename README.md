@@ -20,7 +20,9 @@ Examples to run a quick static server (PowerShell):
 
 pwsh commands:
 
-python -m http.server 5500
+```
+python server.py
+```
 
 Then open http://localhost:5500 in the browser.
 
