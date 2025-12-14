@@ -1,100 +1,221 @@
 {
-  "meta":{
-    "source":"seed (based on Hilton phrasebook 'Most important phrases')",
-    "notes":"This is a small seed. Add more languages/phrases to expand. The app expects an array named 'languages'."
+  "meta": {
+    "source": "https://hilton.org.uk/european_phrase_book",
+    "author": "Peter Hilton",
+    "license": "CC BY-NC-SA 4.0",
+    "imported_at": "2025-12-14T00:00:00Z",
+    "notes": "Imported 'The most important phrases' table. Fields: code (guessed ISO-like), name, translations (token->local), country_phrases (english->local), peculiarities. Review guessed codes if needed."
   },
-  "languages":[
+  "languages": [
     {
-      "code":"en",
-      "name":"English",
-      "translations":{"hi":"hi","a beer":"a beer","please":"please","thank you":"thank you","you're welcome":"you're welcome","cheers!":"cheers!"},
-      "country_phrases":{"Where is the bathroom?":"Where is the bathroom?","Table for two, please":"Table for two, please"},
-      "peculiarities":""
+      "code": "en",
+      "name": "English",
+      "translations": {
+        "hi": "hi",
+        "a beer": "a beer",
+        "please": "please",
+        "thank you": "thank you",
+        "you're welcome": "you're welcome",
+        "cheers!": "cheers!"
+      },
+      "country_phrases": {},
+      "peculiarities": ""
     },
     {
-      "code":"es",
-      "name":"Spanish",
-      "translations":{
-        "hi":"hola",
-        "a beer":"una cerveza",
-        "please":"por favor",
-        "thank you":"gracias",
-        "you're welcome":"de nada",
-        "cheers!":"¡salud!"
-      },
-      "country_phrases":{
-        "Where is the bathroom?":"¿Dónde está el baño?",
-        "Table for two, please":"Una mesa para dos, por favor"
-      },
-      "peculiarities":"Use 'por favor' for please; 'gracias' is standard. In many Spanish-speaking countries 'cheers' is '¡salud!'."
+      "code": "bs",
+      "name": "Bosnian",
+      "translations": {"hi":"ćao","a beer":"pivo","please":"molim","thank you":"hvala","you're welcome":"nema na čemu","cheers!":"živjeli!"},
+      "country_phrases": {},
+      "peculiarities": ""
     },
     {
-      "code":"fr",
-      "name":"French",
-      "translations":{
-        "hi":"salut",
-        "a beer":"une bière",
-        "please":"s'il vous plaît",
-        "thank you":"merci",
-        "you're welcome":"de rien",
-        "cheers!":"santé!"
-      },
-      "country_phrases":{
-        "Where is the bathroom?":"Où sont les toilettes?",
-        "Table for two, please":"Une table pour deux, s'il vous plaît"
-      },
-      "peculiarities":"Formal and informal pronouns matter (tu/vous). 'santé' for cheers; some use 'à la vôtre'."
+      "code": "bg",
+      "name": "Bulgarian",
+      "translations": {"hi":"Здрасти","a beer":"Бира","please":"Моля","thank you":"благодаря","you're welcome":"Моля","cheers!":"Наздраве!"},
+      "country_phrases": {},
+      "peculiarities": ""
     },
     {
-      "code":"de",
-      "name":"German",
-      "translations":{
-        "hi":"hallo",
-        "a beer":"ein Bier",
-        "please":"bitte",
-        "thank you":"danke",
-        "you're welcome":"gern geschehen",
-        "cheers!":"prost!"
-      },
-      "country_phrases":{
-        "Where is the bathroom?":"Wo ist die Toilette?",
-        "Table for two, please":"Ein Tisch für zwei, bitte"
-      },
-      "peculiarities":"'Bitte' can be please or you're welcome depending on context. 'Prost' is common for cheers."
+      "code": "ca",
+      "name": "Catalan",
+      "translations": {"hi":"hola","a beer":"una cervesa","please":"si us plau","thank you":"mercés","you're welcome":"de res","cheers!":"salut"},
+      "country_phrases": {},
+      "peculiarities": ""
     },
     {
-      "code":"it",
-      "name":"Italian",
-      "translations":{
-        "hi":"ciao",
-        "a beer":"una birra",
-        "please":"per favore",
-        "thank you":"grazie",
-        "you're welcome":"prego",
-        "cheers!":"salute!"
-      },
-      "country_phrases":{
-        "Where is the bathroom?":"Dov'è il bagno?",
-        "Table for two, please":"Un tavolo per due, per favore"
-      },
-      "peculiarities":"'Prego' is used for you're welcome; 'salute' or 'cin cin' for cheers."
+      "code": "kw",
+      "name": "Cornish",
+      "translations": {"hi":"Deth da","a beer":"coref","please":"mar plek","thank you":"mur ras","you're welcome":"","cheers!":""},
+      "country_phrases": {},
+      "peculiarities": "Cornish does not have single words for yes/no in some contexts (see Peculiarities)."
     },
     {
-      "code":"pt",
-      "name":"Portuguese",
-      "translations":{
-        "hi":"olá",
-        "a beer":"uma cerveja",
-        "please":"por favor",
-        "thank you":"obrigado",
-        "you're welcome":"de nada",
-        "cheers!":"saúde!"
-      },
-      "country_phrases":{
-        "Where is the bathroom?":"Onde é a casa de banho?",
-        "Table for two, please":"Uma mesa para dois, por favor"
-      },
-      "peculiarities":"In Portuguese 'obrigado' if male speaker, 'obrigada' if female; 'saúde' for cheers."
+      "code": "hr",
+      "name": "Croatian",
+      "translations": {"hi":"bok","a beer":"pivo","please":"molim","thank you":"hvala","you're welcome":"molim","cheers!":"živili!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "cs",
+      "name": "Czech",
+      "translations": {"hi":"ahoj","a beer":"pivo","please":"prosím","thank you":"díky","you're welcome":"není zač","cheers!":"na zdraví"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "da",
+      "name": "Danish",
+      "translations": {"hi":"hej","a beer":"en øl","please":"tak","thank you":"mange tak","you're welcome":"velbekomme","cheers!":"skål!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "nl",
+      "name": "Dutch",
+      "translations": {"hi":"hoi","a beer":"een bier","please":"alsjeblieft","thank you":"bedankt","you're welcome":"graag gedaan","cheers!":"proost!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "et",
+      "name": "Estonian",
+      "translations": {"hi":"tsau","a beer":"üks õlu","please":"palun","thank you":"aitäh","you're welcome":"tänan","cheers!":"terviseks!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "fi",
+      "name": "Finnish",
+      "translations": {"hi":"(moi)","a beer":"bisse","please":"-","thank you":"kiitos","you're welcome":"ole hyvä","cheers!":"kippis!"},
+      "country_phrases": {},
+      "peculiarities": "In Finnish you can use playful phrases like 'hölökyn kölökyn' for cheers (means nothing literal)."
+    },
+    {
+      "code": "fr",
+      "name": "French",
+      "translations": {"hi":"salut","a beer":"une bière","please":"s'il vous plaît","thank you":"merci","you're welcome":"je vous en prie","cheers!":"santé!"},
+      "country_phrases": {"Where is the bathroom?":"où se trouve la section non-fumeurs, s'il vous plaît? (see notes)"},
+      "peculiarities": "Formal and informal pronouns matter (tu/vous)."
+    },
+    {
+      "code": "gl",
+      "name": "Galician",
+      "translations": {"hi":"ola","a beer":"una cervexa","please":"por favor","thank you":"grácias","you're welcome":"de nada","cheers!":"saúde!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "de",
+      "name": "German",
+      "translations": {"hi":"hallo","a beer":"ein Bier","please":"bitte","thank you":"danke","you're welcome":"bitte sehr","cheers!":"prost!"},
+      "country_phrases": {},
+      "peculiarities": "'Bitte' can mean please or you're welcome depending on context."
+    },
+    {
+      "code": "el",
+      "name": "Greek",
+      "translations": {"hi":"γεια σου","a beer":"μια μπιρα","please":"παρακαλω","thank you":"ευχαριστω","you're welcome":"παρακαλω","cheers!":"γειά μας!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "hu",
+      "name": "Hungarian",
+      "translations": {"hi":"szia","a beer":"egy sört","please":"kérek","thank you":"köszi","you're welcome":"szívesen","cheers!":"egészségedre!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "ga",
+      "name": "Irish",
+      "translations": {"hi":"Dia duit","a beer":"Beoir","please":"le do thoil","thank you":"go raibh maith agat","you're welcome":"tá fáilte romhat","cheers!":"sláinte!"},
+      "country_phrases": {"Whose round is it?":"(used in UK & Ireland)"},
+      "peculiarities": "Irish does not have single words for 'yes' and 'no' in all contexts."
+    },
+    {
+      "code": "it",
+      "name": "Italian",
+      "translations": {"hi":"ciao","a beer":"una birra","please":"per favore","thank you":"grazie","you're welcome":"prego","cheers!":"cin cin!"},
+      "country_phrases": {"Che freddo!":"(said when very cold, common north of Italy)"},
+      "peculiarities": ""
+    },
+    {
+      "code": "lt",
+      "name": "Lithuanian",
+      "translations": {"hi":"làbas","a beer":"alus","please":"prašau","thank you":"ačiû","you're welcome":"prašau","cheers!":"Į sveikatą!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "lb",
+      "name": "Luxembourgish",
+      "translations": {"hi":"moien","a beer":"ee béier","please":"wanechgelift","thank you":"merci","you're welcome":"wanechgelift","cheers!":"prost!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "no",
+      "name": "Norwegian",
+      "translations": {"hi":"hei","a beer":"en halvliter","please":"-","thank you":"takk","you're welcome":"versågod","cheers!":"skål!"},
+      "country_phrases": {"Can I have a refill of coffee?":"kan jag få en påtår tack? (Sweden example)"},
+      "peculiarities": "It's less polite in Norway to use 'please' (takk) for asking — use 'may I...' constructions."
+    },
+    {
+      "code": "pl",
+      "name": "Polish",
+      "translations": {"hi":"cześć","a beer":"jedno piwo","please":"proszę","thank you":"dzięki","you're welcome":"proszę","cheers!":"na zdrowie!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "pt",
+      "name": "Portuguese",
+      "translations": {"hi":"olá","a beer":"cerveja","please":"por favor","thank you":"obrigado","you're welcome":"de nada","cheers!":"saúde"},
+      "country_phrases": {},
+      "peculiarities": "In Portuguese 'obrigado' if male speaker, 'obrigada' if female."
+    },
+    {
+      "code": "ro",
+      "name": "Romanian",
+      "translations": {"hi":"bunǎ","a beer":"o bere","please":"vǎ rog","thank you":"mulțumesc","you're welcome":"cu plǎcere","cheers!":"noroc"},
+      "country_phrases": {},
+      "peculiarities": "Romanian has different words for 'hi' depending on gender/formality."
+    },
+    {
+      "code": "sr",
+      "name": "Serbian",
+      "translations": {"hi":"ćao","a beer":"pivo","please":"molim","thank you":"hvala","you're welcome":"nema na čemu","cheers!":"živeli!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "sl",
+      "name": "Slovenian",
+      "translations": {"hi":"živjo","a beer":"pivo","please":"prosim","thank you":"hvala","you're welcome":"prosim","cheers!":"na zdravje!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "translations": {"hi":"hola","a beer":"una cerveza","please":"por favor","thank you":"gracias","you're welcome":"de nada","cheers!":"salud!"},
+      "country_phrases": {},
+      "peculiarities": ""
+    },
+    {
+      "code": "sv",
+      "name": "Swedish",
+      "translations": {"hi":"hej","a beer":"en öl","please":"tack","thank you":"tack så mycket","you're welcome":"var så god","cheers!":"skål!"},
+      "country_phrases": {"Free coffee refill":"kan jag få en påtår tack?"},
+      "peculiarities": ""
+    },
+    {
+      "code": "tr",
+      "name": "Turkish",
+      "translations": {"hi":"merhaba","a beer":"bir bira","please":"lütfen","thank you":"tesekkürler","you're welcome":"bir şey değil","cheers!":""},
+      "country_phrases": {},
+      "peculiarities": ""
     }
   ]
 }
